@@ -7,9 +7,10 @@ import { FaAdn } from "react-icons/fa";
 
 function App() {
   const [searchCity, setSearchCity] = useState([])
-  console.log(searchCity);
+  const [email, setEmail] = useState("")
 
   const api = (e) => {
+    console.log(e.target)
     if(e.target.value === ""){
       setSearchCity([])
       return
@@ -36,10 +37,10 @@ function App() {
               <input onChange={api} placeholder="Destination"/>
             </div>
             <div>
-              <input placeholder="Email@gmail.com"/>
+              <input onChange={(e)=>{setEmail(e.target.value)}} placeholder="Email@gmail.com"/>
             </div>
             <div>
-              <button>Submit</button>
+              <button disabled={searchCity.length === 0 || email.length === 0}>Submit</button>
             </div>
           </div>
         </Content>
