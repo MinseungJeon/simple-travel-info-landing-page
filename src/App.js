@@ -6,18 +6,31 @@ import background from "./background.jpg";
 import { FaAdn } from "react-icons/fa";
 
 function App() {
-  const [searchCity, setSearchCity] = useState([])
+  
+  const [originCity, setOriginCity] = useState([])
+  const [destinationCity, setDestinationCity] = useState([])
   const [email, setEmail] = useState("")
 
-  const api = (e) => {
-    console.log(e.target)
+  console.log(email)
+
+  const originAPI = (e) => {
     if(e.target.value === ""){
-      setSearchCity([])
+      setOriginCity([])
       return
     }
     axios.get(`https://restcountries.eu/rest/v2/capital/${e.target.value}`)
-    .then((response)=>{setSearchCity(response.data)})
-    .catch(()=>{setSearchCity([])})
+    .then((response)=>{setOriginCity(response.data)})
+    .catch(()=>{setOriginCity([])})
+  }
+
+  const destinationAPI = (e) => {
+    if(e.target.value === ""){
+      setDestinationCity([])
+      return
+    }
+    axios.get(`https://restcountries.eu/rest/v2/capital/${e.target.value}`)
+    .then((response)=>{setDestinationCity(response.data)})
+    .catch(()=>{setDestinationCity([])})
   }
 
   return (
@@ -31,22 +44,31 @@ function App() {
         <Content>
           <div className="form">
             <div>
-              <input onChange={api} placeholder="Origin"/>
+              <input onChange={originAPI} placeholder="Origin"/>
             </div>
             <div>
-              <input onChange={api} placeholder="Destination"/>
+              <input onChange={destinationAPI} placeholder="Destination"/>
             </div>
             <div>
               <input onChange={(e)=>{setEmail(e.target.value)}} placeholder="Email@gmail.com"/>
             </div>
             <div>
-              <button disabled={searchCity.length === 0 || email.length === 0}>Submit</button>
+              <button disabled={originCity.length === 0 || destinationCity.length === 0 || email.length === 0}>Submit</button>
             </div>
           </div>
+          {(originCity.length === 0 && destinationCity.length === 0) && <p>AT LEAST 1 LETTERS !!! </p>}
+          {!email?.includes("@") && <p>Check including "@" in email address !!! </p>}
         </Content>
         <Modal>
-          <ul>
-            {searchCity.slice(0, 5).map((a, i)=>{
+          <ul className="originList">
+            <p>Origin</p>
+            {originCity.slice(0, 5).map((a, i)=>{
+                return <li key={i}>{a.capital}</li>
+            })}  
+          </ul>
+          <ul className="destinationList">
+            <p>Destinatiion</p>
+            {destinationCity.slice(0, 5).map((a, i)=>{
                 return <li key={i}>{a.capital}</li>
             })}
           </ul>
@@ -78,6 +100,7 @@ const Title = styled.div`
   text-align : center;
 `
 const Content = styled.div`
+
   .form {
     display : flex;
     justify-content : center;
@@ -93,11 +116,37 @@ const Content = styled.div`
       height : 30px;
     }
   }
+
+  p {
+    width : 100vw;
+    border : 1px solid red;
+    font-weight : 700;
+    color : red;
+    text-align : center;
+    background : black;
+    z-index : 5;
+  }
 `
 const Modal = styled.div`
   border : 1px solid black;
   text-align : center;
   z-index : 10;
-  background-color : whitesmoke;
   border : none;
+
+  .originList{
+    p {
+      background-color : whitesmoke;
+      font-weight:bold;
+    }
+    background-color : aquamarine;
+    margin : 50px 0;
+
+  }
+  .destinationList{
+    p {
+      background-color : whitesmoke;
+      font-weight:bold
+    }
+    background-color : aquamarine;
+  }
 `
