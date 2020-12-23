@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import axios from "axios";
 import emailjs from 'emailjs-com';
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
-import { createGlobalStyle } from 'styled-components'
+import { useCookies, CookiesProvider } from 'react-cookie';
+import styled, { createGlobalStyle } from 'styled-components'
 import background from "./background.jpg";
 import { FaAdn } from "react-icons/fa";
 
@@ -11,7 +11,24 @@ function App() {
   
   const [originCity, setOriginCity] = useState([])
   const [destinationCity, setDestinationCity] = useState([])
-  const [email, setEmail] = useState("")
+  const [cookies, setCookie] = useCookies(['inputs']);
+  const [inputs, setInputs] = useState(cookies.inputs||{});
+
+
+
+ const onChangeInput= (e) => {
+   setInputs({
+     ...inputs,
+     [e.target.name]: e.target.value
+   })
+   if(e.target.name ==="origin"){
+     originAPI(e)
+   }else if(
+     e.target.name ==="destination"
+   ){
+    destinationAPI(e)  
+   }
+ }
 
   const originAPI = (e) => {
     if(e.target.value === ""){
@@ -37,8 +54,7 @@ function App() {
   
   const sendEmail = (e) => {
     e.preventDefault();
-    
-
+    setCookie("inputs", inputs, {path:"/"})
     emailjs.sendForm('service_8z0ahe8', 'template_9w6uesp', e.target, 'user_7qxPOgv286TSU1lHEJVg4')
       .then((result) => {
           console.log(result.text);
@@ -50,7 +66,7 @@ function App() {
   }
 
   return (
-    <React.Fragment>
+    <CookiesProvider>
       <GlobalStyle/>
       <Container>
         <Title>
@@ -60,20 +76,20 @@ function App() {
         <Content>
           <form onSubmit={sendEmail}>
             <div>
-              <input name="origin" onChange={originAPI} placeholder="Origin"/>
+              <input name="origin" onChange={onChangeInput} value={inputs.origin||""} placeholder="Origin"/>
             </div>
             <div>
-              <input name="destination" onChange={destinationAPI} placeholder="Destination"/>
+              <input name="destination" onChange={onChangeInput} value={inputs.destination||""} placeholder="Destination"/>
             </div>
             <div>
-              <input onChange={(e)=>{setEmail(e.target.value)}} placeholder="Email@gmail.com"/>
+              <input name="email" onChange={onChangeInput} value={inputs.email||""} placeholder="Email@gmail.com"/>
             </div>
             <div>
-              <button disabled={originCity.length === 0 || destinationCity.length === 0 || email.length === 0}>Submit</button>
+              <button disabled={originCity?.length === 0 || destinationCity?.length === 0 || inputs.email?.length === 0}>Submit</button>
             </div>
           </form>
           {(originCity.length === 0 && destinationCity.length === 0) && <p>AT LEAST 1 LETTERS !!! </p>}
-          {!email?.includes("@") && <p>Check including "@" in email address !!! </p>}
+          {!inputs.email?.includes("@") && <p>Check including "@" in email address !!! </p>}
         </Content>
         <Modal>
           <ul className="originList">
@@ -90,7 +106,7 @@ function App() {
           </ul>
         </Modal>
       </Container>
-    </React.Fragment>
+    </CookiesProvider>
   );
 }
 
@@ -109,9 +125,7 @@ const Container = styled.div`
   height : 100vh;
   background-image : url(${background});
   background-size : cover; 
-}
 `
-
 const Title = styled.div`
   font-size : 3rem;
   font-weight : 800;
@@ -132,7 +146,7 @@ const Content = styled.div`
       height : 1.5rem;
       @media (max-width: 768px) {
         width : 10rem;
-    }
+      }
     }
 
     button {
@@ -141,7 +155,7 @@ const Content = styled.div`
 
       @media (max-width: 768px) {
         width : 10rem;
-    }
+      }
     }
   }
 
