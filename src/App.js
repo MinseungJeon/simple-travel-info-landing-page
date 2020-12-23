@@ -105,9 +105,11 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const Container = styled.div`
+  width: 100vw;
   height : 100vh;
   background-image : url(${background});
-  background-size : cover;
+  background-size : cover; 
+}
 `
 
 const Title = styled.div`
@@ -116,20 +118,30 @@ const Title = styled.div`
   text-align : center;
 `
 const Content = styled.div`
-
   form {
     display : flex;
     justify-content : center;
     align-items : center;
-    
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
     input {
-      height : 30px;
-      margin : 5px;
+      width : 7rem;
+      height : 1.5rem;
+      @media (max-width: 768px) {
+        width : 10rem;
+    }
     }
 
     button {
-      width : 100px;
-      height : 30px;
+      width : 5rem;
+      height : 1.5rem;
+
+      @media (max-width: 768px) {
+        width : 10rem;
+    }
     }
   }
 
@@ -155,7 +167,7 @@ const Modal = styled.div`
       font-weight:bold;
     }
     background-color : aquamarine;
-    margin : 50px 0;
+    margin : 2rem 0;
 
   }
   .destinationList{

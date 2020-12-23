@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from "styled-components";
 import { createGlobalStyle } from 'styled-components'
 import background from "./background.jpg";
-import { FaAdn } from "react-icons/fa";
+import { FaAdn, FaTruckLoading } from "react-icons/fa";
 
 function NewPage(){
+
+  useEffect(()=>{alert("Loading")},[])
+
   return (
     <React.Fragment>
       <GlobalStyle/>
