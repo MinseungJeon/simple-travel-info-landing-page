@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from "axios";
+import emailjs from 'emailjs-com';
 import styled from "styled-components";
 import { createGlobalStyle } from 'styled-components'
 import background from "./background.jpg";
@@ -10,8 +11,6 @@ function App() {
   const [originCity, setOriginCity] = useState([])
   const [destinationCity, setDestinationCity] = useState([])
   const [email, setEmail] = useState("")
-
-  console.log(email)
 
   const originAPI = (e) => {
     if(e.target.value === ""){
@@ -33,6 +32,18 @@ function App() {
     .catch(()=>{setDestinationCity([])})
   }
 
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs.sendForm('service_8z0ahe8', 'template_9w6uesp', e.target, 'user_7qxPOgv286TSU1lHEJVg4')
+      .then((result) => {
+          console.log(result.text);
+      }, (error) => {
+          console.log(error.text);
+      });
+      e.target.reset();
+  }
+
   return (
     <React.Fragment>
       <GlobalStyle/>
@@ -42,12 +53,12 @@ function App() {
           <div><FaAdn/></div>
         </Title>
         <Content>
-          <div className="form">
+          <form onSubmit={sendEmail}>
             <div>
-              <input onChange={originAPI} placeholder="Origin"/>
+              <input name="origin" onChange={originAPI} placeholder="Origin"/>
             </div>
             <div>
-              <input onChange={destinationAPI} placeholder="Destination"/>
+              <input name="destination" onChange={destinationAPI} placeholder="Destination"/>
             </div>
             <div>
               <input onChange={(e)=>{setEmail(e.target.value)}} placeholder="Email@gmail.com"/>
@@ -55,7 +66,7 @@ function App() {
             <div>
               <button disabled={originCity.length === 0 || destinationCity.length === 0 || email.length === 0}>Submit</button>
             </div>
-          </div>
+          </form>
           {(originCity.length === 0 && destinationCity.length === 0) && <p>AT LEAST 1 LETTERS !!! </p>}
           {!email?.includes("@") && <p>Check including "@" in email address !!! </p>}
         </Content>
@@ -101,7 +112,7 @@ const Title = styled.div`
 `
 const Content = styled.div`
 
-  .form {
+  form {
     display : flex;
     justify-content : center;
     align-items : center;
