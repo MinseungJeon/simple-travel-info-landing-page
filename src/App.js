@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import emailjs from 'emailjs-com';
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { createGlobalStyle } from 'styled-components'
 import background from "./background.jpg";
@@ -32,12 +33,16 @@ function App() {
     .catch(()=>{setDestinationCity([])})
   }
 
+  let history = useHistory();
+  
   const sendEmail = (e) => {
     e.preventDefault();
+    
 
     emailjs.sendForm('service_8z0ahe8', 'template_9w6uesp', e.target, 'user_7qxPOgv286TSU1lHEJVg4')
       .then((result) => {
           console.log(result.text);
+          history.push("/newpage");
       }, (error) => {
           console.log(error.text);
       });
